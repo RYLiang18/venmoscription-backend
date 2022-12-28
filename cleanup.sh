@@ -1,0 +1,3 @@
+echo cleaning up...
+docker container rm venmoscription_backend_container
+docker image rm venmoscription_backend_image:latest
