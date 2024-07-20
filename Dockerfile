@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bullseye
+FROM python:3.10.12-slim-bullseye
 
 ENV USER appuser
 RUN useradd --create-home --shell /bin/bash ${USER}
