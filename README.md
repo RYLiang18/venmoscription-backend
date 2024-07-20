@@ -9,4 +9,4 @@ For example:
 - etc.
 
 ## Stack
-- go (gin/gorm)
+- flask

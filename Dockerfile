@@ -1,9 +1,19 @@
-FROM golang:1.20rc1-alpine3.17
+FROM python:3.12-slim-bullseye
 
-RUN addgroup app && adduser -S -G app app
-USER app
+ENV USER appuser
+RUN useradd --create-home --shell /bin/bash ${USER}
+USER ${USER}
+WORKDIR /home/${USER}
 
-ENV HOME /go/github.com/RYLiang18/venmoscription-backend
-RUN mkdir -p ${HOME}
+EXPOSE 5000/tcp
 
-WORKDIR ${HOME}
+RUN python -m pip install -U pip
+
+# // other packages ////////////////////
+# RUN pip install Flask-WTF
+# RUN pip install Flask-Bcrypt
+# RUN pip install Flask-Login
+# RUN pip install flask-mongoengine
+# //////////////////////////////////////
+
+COPY . .
