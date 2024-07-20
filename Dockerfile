@@ -11,14 +11,9 @@ RUN python -m pip install -U pip
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-RUN pip install python-dotenv
+
+# RUN pip install python-dotenv
 RUN pip freeze > requirements-dev.txt
 
-# // other packages ////////////////////
-# RUN pip install Flask-WTF
-# RUN pip install Flask-Bcrypt
-# RUN pip install Flask-Login
-# RUN pip install flask-mongoengine
-# //////////////////////////////////////
 
 COPY . .
