@@ -1,0 +1,1 @@
+- os.path is relative to the entrypoint of application. Even inside of flask_app/, when referring to something in the outside directory - since the entrypoint is run.py, we don't need the "..". So in flask_app/, we can access database.db with "database.db" instead of "../database.db"

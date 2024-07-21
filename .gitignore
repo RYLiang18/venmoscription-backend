@@ -1,2 +1,10 @@
 # venv
 .venmoscription-backend/
+
+# secrets
+.env
+
+# database
+database.db
+
+__pycache__

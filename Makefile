@@ -4,8 +4,8 @@ container_name = "backend"
 .PHONY: clean
 clean: delete_container delete_image
 
-.PHONY: create_image
-create_image:
+.PHONY: image
+image:
 	docker build -t $(container_image_name) .
 
 .PHONY: delete_image
@@ -17,10 +17,11 @@ delete_container:
 	docker stop $(container_name)
 	docker rm $(container_name)
 
-.PHONY: it
-it:
+.PHONY: interactive
+interactive:
 	docker run \
 		-it \
+		--env-file .env \
 		-p 5000:5000 \
 		--name $(container_name) \
 		$(container_image_name):latest \
@@ -30,13 +31,8 @@ it:
 flask:
 	docker run \
 		-it \
+		--env-file .env \
 		-p 5000:5000 \
 		--name $(container_name) \
 		$(container_image_name):latest \
-		python -m flask --app flask_app run
-
-.PHONY: interactive
-interactive: clean create_image it
-
-.PHONY: run
-run: clean create_image flask
+		python -m flask --app "flask_app:create_app('development')" run
