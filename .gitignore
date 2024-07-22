@@ -1,5 +1,6 @@
 # venv
-.venmoscription-backend/
+.venmoscription-backend
+
 
 # secrets
 .env
