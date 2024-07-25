@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, url_for, redirect
-from flask_app import database, oauth
+from flask_app import oauth
 from flask_app.models import User
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 
 """
 Google Oauth resources:
@@ -21,13 +21,44 @@ def home():
 
 @auth_blueprint.route("/login")
 def login():
-    redirect_uri = url_for("auth.auth", _external=True)
+    if current_user.is_authenticated:
+        return jsonify(
+            {"error": "Forbidden", "message": "You are already authenticated"}
+        )
+    redirect_uri = url_for("auth.login_auth", _external=True)
     return oauth.google.authorize_redirect(redirect_uri)
 
 
+@auth_blueprint.route("/register")
+def register():
+    if current_user.is_authenticated:
+        return jsonify(
+            {"error": "Forbidden", "message": "You are already authenticated"}
+        )
+    redirect_uri = url_for("auth.register_auth", _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@auth_blueprint.route("/register-auth")
+def register_auth():
+    token = oauth.google.authorize_access_token()
+    user_info = token["userinfo"]
+
+    # https://connect2id.com/learn/openid-connect
+    # Google oauth uses OIDC, `sub` key can be used as ID
+    email = user_info["email"]
+    subject = user_info["sub"]
+    user = User.get(subject)
+    if user:
+        return jsonify({"error": "Forbidden", "message": f"{email} already exists"})
+
+    User.create(subject, email)
+    return ""
+
+
 # google auth route
-@auth_blueprint.route("/auth")
-def auth():
+@auth_blueprint.route("/login-auth")
+def login_auth():
     token = oauth.google.authorize_access_token()
     user_info = token["userinfo"]
 
@@ -38,11 +69,10 @@ def auth():
     user = User.get(subject)
 
     if not user:
-        return jsonify({"error": f"{email} user not found"}), 404
+        return jsonify({"error": "not found", "message": f"{email} not found"})
 
     login_user(user)
-
-    return redirect("/")
+    return jsonify(user_info)
 
 
 @auth_blueprint.route("/logout")

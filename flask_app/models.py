@@ -1,7 +1,5 @@
 from flask_login import UserMixin
-from flask_app import login_manager
-
-from db import get_db
+from flask_app import login_manager, database
 
 
 @login_manager.user_loader
@@ -16,7 +14,7 @@ class User(UserMixin):
 
     @staticmethod
     def get(user_id):
-        db = get_db()
+        db = database.get_db()
         user = db.execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
         if not user:
             return None
@@ -26,7 +24,7 @@ class User(UserMixin):
 
     @staticmethod
     def create(id_, email):
-        db = get_db()
+        db = database.get_db()
         db.execute(
             "INSERT INTO user (id, email) VALUES (?, ?)",
             (id_, email),
