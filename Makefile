@@ -1,5 +1,12 @@
+SHELL := /bin/zsh
+
 container_image_name = "backend_image"
 container_name = "backend"
+
+.PHONY: local
+local:
+	source .venmoscription-backend/bin/activate
+	python -m flask --app "flask_app:create_app('development')" run
 
 .PHONY: clean
 clean: delete_container delete_image
